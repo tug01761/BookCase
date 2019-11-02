@@ -19,6 +19,7 @@ public class BookDetailsFragment extends Fragment {
         // Required empty public constructor
     }
 
+
     public static BookDetailsFragment newInstance(String bookTitle) {
         BookDetailsFragment bookDetailsFragment = new BookDetailsFragment();
         Bundle args = new Bundle();
