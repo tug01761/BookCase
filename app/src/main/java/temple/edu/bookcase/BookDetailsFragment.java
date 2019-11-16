@@ -72,6 +72,7 @@ public class BookDetailsFragment extends Fragment {
     // Public method for parent Activity to "talk" to BookDetailsFragment
     public void displayBook(Book book) {
         Picasso.get().load(book.getCoverUrl()).into(bookCover);
+
         bookTitle.setText(book.getTitle());
         bookTitle.setGravity(Gravity.CENTER);
 

@@ -1,4 +1,4 @@
-    package temple.edu.bookcase;
+package temple.edu.bookcase;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
@@ -42,8 +42,13 @@ import java.util.ArrayList;
                         // Get book at index
                         JSONObject bookObject = booksArray.getJSONObject(i);
                         // Create Book using JSON data
-                        Book newBook = new Book(bookObject.getInt("book_id"), bookObject.getString("title"), bookObject.getString("author"),
-                                                bookObject.getString("time"), bookObject.getInt("published"), bookObject.getString("cover_url"));
+                        Book newBook = new Book(
+                                bookObject.getInt("book_id"),
+                                bookObject.getString("title"),
+                                bookObject.getString("author"),
+                                bookObject.getString("duration"),
+                                bookObject.getInt("published"),
+                                bookObject.getString("cover_url"));
                         // Add newBook to ArrayList<Book>
                         books.add(newBook);
                     }
