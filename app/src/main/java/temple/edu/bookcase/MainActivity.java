@@ -211,6 +211,7 @@ import java.util.ArrayList;
 
 
 
+
         @Override
         public void bookSelected(int position) {
             Book book = books.get(position);
@@ -223,7 +224,6 @@ import java.util.ArrayList;
             if (!singlePane) {
                 getSupportFragmentManager()
                         .beginTransaction()
-                        .addToBackStack(null)
                         .replace(R.id.fl_2, bookDetailsFragment)
                         .commit();
             }
