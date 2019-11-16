@@ -11,8 +11,8 @@ import android.widget.TextView;
 
 public class BookDetailsFragment extends Fragment {
     TextView textView;
-    public static final String BOOK_TITLE_ARGS = "book title";
-    String bookTitle;
+    public static final String BOOK_KEY = "book";
+    Book book;
 
 
     public BookDetailsFragment() {
@@ -20,10 +20,10 @@ public class BookDetailsFragment extends Fragment {
     }
 
 
-    public static BookDetailsFragment newInstance(String bookTitle) {
+    public static BookDetailsFragment newInstance(Book book) {
         BookDetailsFragment bookDetailsFragment = new BookDetailsFragment();
         Bundle args = new Bundle();
-        args.putString(BOOK_TITLE_ARGS, bookTitle);
+        args.putParcelable(BOOK_KEY, book);
         bookDetailsFragment.setArguments(args);
         return bookDetailsFragment;
     }
@@ -33,10 +33,10 @@ public class BookDetailsFragment extends Fragment {
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            bookTitle = args.getString(BOOK_TITLE_ARGS);
+            book = args.getParcelable(BOOK_KEY);
         }
     }
-
+/*
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -47,6 +47,8 @@ public class BookDetailsFragment extends Fragment {
         }
         return textView;
     }
+    */
+
 
     // Public method for parent Activity to "talk" to BookDetailsFragment
     public void displayBook(String title) {

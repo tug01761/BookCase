@@ -10,7 +10,7 @@ import java.util.Arrays;
 
     public class MainActivity extends AppCompatActivity implements BookListFragment.OnBookSelectedInterface {
         BookDetailsFragment bookDetailsFragment;
-        ArrayList<String> books = new ArrayList<>();
+        ArrayList<Book> books = new ArrayList<>();
         boolean singlePane;
 
         @Override
@@ -18,7 +18,7 @@ import java.util.Arrays;
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
             Resources res = getResources();
-            books.addAll(Arrays.asList(res.getStringArray(R.array.books)));
+            //books.addAll(Arrays.asList(res.getStringArray(R.array.books)));
 
             // Checking whether its landscape or portrait
             singlePane = (findViewById(R.id.fl_2) == null);
@@ -50,7 +50,7 @@ import java.util.Arrays;
 
             bookDetailsFragment = new BookDetailsFragment();
             Bundle detailsBundle = new Bundle();
-            detailsBundle.putString(BookDetailsFragment.BOOK_TITLE_ARGS, bookTitle);
+            detailsBundle.putString(BookDetailsFragment.BOOK_KEY, bookTitle);
             bookDetailsFragment.setArguments(detailsBundle);
 
             if (!singlePane) {
