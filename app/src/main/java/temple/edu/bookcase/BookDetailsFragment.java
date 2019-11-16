@@ -13,6 +13,8 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.squareup.picasso.Picasso;
+
 import java.util.Objects;
 
 
@@ -69,6 +71,7 @@ public class BookDetailsFragment extends Fragment {
 
     // Public method for parent Activity to "talk" to BookDetailsFragment
     public void displayBook(Book book) {
+        Picasso.get().load(book.getCoverUrl()).into(bookCover);
         bookTitle.setText(book.getTitle());
         bookTitle.setGravity(Gravity.CENTER);
 

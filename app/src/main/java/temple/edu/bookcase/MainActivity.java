@@ -2,11 +2,13 @@
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
-import android.content.res.Resources;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -17,12 +19,16 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 
     public class MainActivity extends AppCompatActivity implements BookListFragment.OnBookSelectedInterface {
         BookDetailsFragment bookDetailsFragment;
+        Fragment fl1;
+        Fragment fl2;
         ArrayList<Book> books;
+        Button searchBtn;
+        EditText searchInput;
+        String searchQuery = "";
         boolean singlePane;
 
         Handler booksHandler = new Handler(new Handler.Callback() {
@@ -40,28 +46,40 @@ import java.util.Arrays;
                                                 bookObject.getString("time"), bookObject.getInt("published"), bookObject.getString("cover_url"));
                         // Add newBook to ArrayList<Book>
                         books.add(newBook);
-                        Log.d("Adding book: ", newBook.toString());
                     }
 
+                    fl1 = getSupportFragmentManager().findFragmentById(R.id.fl_1); // get reference to fragment currently in container_1
+                    fl2 = getSupportFragmentManager().findFragmentById(R.id.fl_2); // get reference to fragment currently in container_1
                     singlePane = (findViewById(R.id.fl_2) == null);
 
-                    Fragment container1Fragment = getSupportFragmentManager().findFragmentById(R.id.fl_1);
+                    Fragment fl1 = getSupportFragmentManager().findFragmentById(R.id.fl_1);
 
-                    if (container1Fragment == null && singlePane) { // if container_1 has no Fragment already attached to it and we're in singlePane
-                        // Attach ViewPagerFragment
-                        getSupportFragmentManager()
-                                .beginTransaction()
-                                .addToBackStack(null)
-                                .add(R.id.fl_1, ViewPagerFragment.newInstance(books))
-                                .commit();
-                    } else if (container1Fragment instanceof BookListFragment && singlePane) { // if container1Fragment is a BookListFragment, meaning we're coming back to singlePane from landscape mode
-                        // Attach ViewPagerFragment
+                    if (fl1 == null && singlePane) {
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.fl_1, ViewPagerFragment.newInstance(books))
                                 .commit();
-                    } else { // it's not singlePane or its null
-                        // Attach BookListFragment
+                    } else if (fl1 == null) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fl_1, BookListFragment.newInstance(books))
+                                .commit();
+                    } else if (fl1 instanceof ViewPagerFragment && !searchQuery.equals("")) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fl_1, ViewPagerFragment.newInstance(books))
+                                .commit();
+                    } else if (fl1 instanceof BookListFragment && !searchQuery.equals("")) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fl_1, BookListFragment.newInstance(books))
+                                .commit();
+                    } else if (searchQuery.equals("") && ((fl1 instanceof ViewPagerFragment))) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fl_1, ViewPagerFragment.newInstance(books))
+                                .commit();
+                    } else if (searchQuery.equals("") && ((fl1 instanceof BookListFragment))) {
                         getSupportFragmentManager()
                                 .beginTransaction()
                                 .replace(R.id.fl_1, BookListFragment.newInstance(books))
@@ -78,30 +96,112 @@ import java.util.Arrays;
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
             setContentView(R.layout.activity_main);
-            Resources res = getResources();
-            //books.addAll(Arrays.asList(res.getStringArray(R.array.books)));
-            new Thread() {
-                @Override
-                public void run() {
-                    URL url = null;
-                    try {
-                        // Using NBA API
-                        url = new URL("https://kamorris.com/lab/audlib/booksearch.php");
-                        BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
-                        StringBuilder builder = new StringBuilder(); // StringBuilder, keep adding on bits of a string
-                        String response;
-                        while ((response = reader.readLine()) != null) {
-                            builder.append(response);
-                        }
-                        // Need to use Handler
-                        Message msg = Message.obtain();
-                        msg.obj = builder.toString(); // gives you string created from StringBuilder object
-                        booksHandler.sendMessage(msg);
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
+
+            searchInput = findViewById(R.id.searchInput);
+            searchBtn = findViewById(R.id.searchBtn);
+
+            fl1 = getSupportFragmentManager().findFragmentById(R.id.fl_1);
+            fl2 = getSupportFragmentManager().findFragmentById(R.id.fl_2);
+            singlePane = (findViewById(R.id.fl_2) == null);
+
+            if (fl1 == null && fl2 == null) {
+                fetchBooks(null);
+            }
+
+            if (fl1 instanceof BookListFragment && singlePane) {
+                if (fl1 != null && ((BookListFragment) fl1).getBooks() != null) {
+                    books = ((BookListFragment) fl1).getBooks();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fl_1, ViewPagerFragment.newInstance(books))
+                            .commit();
                 }
-            }.start();
+            } else if (fl1 instanceof ViewPagerFragment && !singlePane) {
+                if (fl1 != null && ((ViewPagerFragment) fl1).getBooks() != null) {
+                    books = ((ViewPagerFragment) fl1).getBooks();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fl_1, BookListFragment.newInstance(books))
+                            .commit();
+                }
+            } else if (fl1 instanceof BookListFragment) {
+                if (fl1 != null && ((BookListFragment) fl1).getBooks() != null) {
+                    books = ((BookListFragment) fl1).getBooks();
+                    getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fl_1, BookListFragment.newInstance(books))
+                            .commit();
+                }
+            }
+
+            searchBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    searchQuery = searchInput.getText().toString();
+                    fl2 = getSupportFragmentManager().findFragmentById(R.id.fl_2); // get reference to fragment currently in container_1=
+                    if (fl2 != null) {
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .remove(fl2)
+                                .commit();
+                    }
+                    // Do query for new books
+                    fetchBooks(searchQuery);
+                }
+            });
+        }
+
+        /* Fetches books */
+        public void fetchBooks(final String searchString) {
+            if (searchString == null || searchString.length() == 0) { // if searchQuery is null or a user has deleted all entered text and hit search again, fetch all books
+                // Fetch books via API and add them all or some if query provided to ArrayList<Book> books
+                new Thread() {
+                    @Override
+                    public void run() {
+                        URL url = null;
+                        try {
+                            url = new URL("https://kamorris.com/lab/audlib/booksearch.php");
+                            Log.d("No search query entered. URL is: ", url.toString());
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                            StringBuilder builder = new StringBuilder(); // StringBuilder, keep adding on bits of a string
+                            String response;
+                            while ((response = reader.readLine()) != null) {
+                                builder.append(response);
+                            }
+                            // Need to use Handler
+                            Message msg = Message.obtain();
+                            msg.obj = builder.toString(); // gives you string created from StringBuilder object
+                            booksHandler.sendMessage(msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            } else {
+                // Fetch books via API and add them all or some if query provided to ArrayList<Book> books
+                new Thread() {
+                    @Override
+                    public void run() {
+                        URL url = null;
+                        try {
+                            url = new URL("https://kamorris.com/lab/audlib/booksearch.php?search=" + searchString);
+                            Log.d("Search URL is: ", url.toString());
+                            BufferedReader reader = new BufferedReader(new InputStreamReader(url.openStream()));
+                            StringBuilder builder = new StringBuilder(); // StringBuilder, keep adding on bits of a string
+                            String response;
+                            while ((response = reader.readLine()) != null) {
+                                builder.append(response);
+                            }
+                            // Need to use Handler
+                            Message msg = Message.obtain();
+                            msg.obj = builder.toString(); // gives you string created from StringBuilder object
+                            booksHandler.sendMessage(msg);
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }
         }
 
 
