@@ -14,7 +14,8 @@ import java.util.ArrayList;
 
 public class BookListFragment extends Fragment
 {
-    ArrayList<String> books;
+    ArrayList<Book> books;
+    ArrayList<String> bookTitles = new ArrayList<>();
     public final static String ARG_BOOKS = "books";
     private OnBookSelectedInterface fragmentP;
 
@@ -22,10 +23,10 @@ public class BookListFragment extends Fragment
         // Required empty public constructor
     }
 
-    public static BookListFragment newInstance(ArrayList<String> books) {
+    public static BookListFragment newInstance(ArrayList<Book> books) {
         BookListFragment bookListFragment = new BookListFragment();
         Bundle args = new Bundle();
-        args.putStringArrayList(ARG_BOOKS, books);
+        args.putParcelableArrayList(ARG_BOOKS, books);
         bookListFragment.setArguments(args);
         return bookListFragment;
     }
@@ -35,7 +36,13 @@ public class BookListFragment extends Fragment
         super.onCreate(savedInstanceState);
         Bundle args = getArguments();
         if (args != null) {
-            books = args.getStringArrayList(ARG_BOOKS);
+            books = args.getParcelableArrayList(ARG_BOOKS);
+        }
+        // Get all book titles to be used for ArrayAdapter list item
+        if (books != null) {
+            for (int i = 0; i < books.size(); i++) {
+                bookTitles.add(books.get(i).getTitle());
+            }
         }
     }
 
@@ -76,6 +83,10 @@ public class BookListFragment extends Fragment
 
     public interface OnBookSelectedInterface {
         void bookSelected(int position);
+    }
+
+    public ArrayList<Book> getBooks() {
+        return this.books;
     }
 }
 

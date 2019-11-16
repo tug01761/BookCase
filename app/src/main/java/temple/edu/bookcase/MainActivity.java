@@ -22,7 +22,7 @@ import java.util.Arrays;
 
     public class MainActivity extends AppCompatActivity implements BookListFragment.OnBookSelectedInterface {
         BookDetailsFragment bookDetailsFragment;
-        ArrayList<Book> books = new ArrayList<>();
+        ArrayList<Book> books;
         boolean singlePane;
 
         Handler booksHandler = new Handler(new Handler.Callback() {
@@ -40,7 +40,32 @@ import java.util.Arrays;
                                                 bookObject.getString("time"), bookObject.getInt("published"), bookObject.getString("cover_url"));
                         // Add newBook to ArrayList<Book>
                         books.add(newBook);
-                        Log.d("Book object from JSON: ", newBook.toString());
+                        Log.d("Adding book: ", newBook.toString());
+                    }
+
+                    singlePane = (findViewById(R.id.fl_2) == null);
+
+                    Fragment container1Fragment = getSupportFragmentManager().findFragmentById(R.id.fl_1);
+
+                    if (container1Fragment == null && singlePane) { // if container_1 has no Fragment already attached to it and we're in singlePane
+                        // Attach ViewPagerFragment
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .addToBackStack(null)
+                                .add(R.id.fl_1, ViewPagerFragment.newInstance(books))
+                                .commit();
+                    } else if (container1Fragment instanceof BookListFragment && singlePane) { // if container1Fragment is a BookListFragment, meaning we're coming back to singlePane from landscape mode
+                        // Attach ViewPagerFragment
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fl_1, ViewPagerFragment.newInstance(books))
+                                .commit();
+                    } else { // it's not singlePane or its null
+                        // Attach BookListFragment
+                        getSupportFragmentManager()
+                                .beginTransaction()
+                                .replace(R.id.fl_1, BookListFragment.newInstance(books))
+                                .commit();
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
@@ -77,30 +102,9 @@ import java.util.Arrays;
                     }
                 }
             }.start();
-
-            // Checking whether its landscape or portrait
-            singlePane = (findViewById(R.id.fl_2) == null);
-
-            Fragment container1Fragment = getSupportFragmentManager().findFragmentById(R.id.fl_1);
-
-            if (container1Fragment == null && singlePane) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .addToBackStack(null)
-                        .add(R.id.fl_1, new ViewPagerFragment())
-                        .commit();
-            } else if (container1Fragment instanceof BookListFragment && singlePane) {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        .replace(R.id.fl_1, new ViewPagerFragment())
-                        .commit();
-            } else {
-                getSupportFragmentManager()
-                        .beginTransaction()
-                        //.replace(R.id.fl_1, BookListFragment.newInstance(books))
-                        .commit();
-            }
         }
+
+
 
         @Override
         public void bookSelected(int position) {

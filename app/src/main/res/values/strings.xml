@@ -1,23 +1,4 @@
 <resources>
     <string name="app_name">BookCase</string>
-    <string-array name="books">
-        <item>The Great Gatsby</item>
-        <item>On the Road</item>
-        <item>To Kill A Mockingbird</item>
-        <item>The Lord Of The Rings</item>
-        <item>Lolita Vladimir</item>
-        <item>The Catcher in the Rye</item>
-        <item>Ulysses</item>
-        <item>Lord of the Flies</item>
-        <item>The Grapes Of Wrath</item>
-        <item>1984</item>
-        <item>Jane Eyre</item>
-        <item>A Passage</item>
-        <item>Brave New World</item>
-        <item>Pride and Prejudice</item>
-        <item>Animal Farm</item>
-    </string-array>
 
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>
