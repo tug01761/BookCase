@@ -1,5 +1,6 @@
 package temple.edu.bookcase;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -10,6 +11,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -19,17 +21,19 @@ import java.util.Objects;
 
 
 public class BookDetailsFragment extends Fragment {
+
+    public static final String BOOK_KEY = "book";
+    private OnBookPlay fragmentParent;
     ConstraintLayout bookDetailsView;
     ImageView bookCover;
     TextView bookTitle, bookAuthor, bookPublishedIn, bookPageLength;
-    public static final String BOOK_KEY = "book";
     Book book;
+    Button playBtn;
 
 
     public BookDetailsFragment() {
         // Required empty public constructor
     }
-
 
     public static BookDetailsFragment newInstance(Book book) {
         BookDetailsFragment bookDetailsFragment = new BookDetailsFragment();
@@ -66,13 +70,38 @@ public class BookDetailsFragment extends Fragment {
         bookPageLength = getView().findViewById(R.id.bookPageLength);
         if (book != null) {
             displayBook(book);
+            playBtn = getView().findViewById(R.id.playBtn);
+            playBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    fragmentParent.playBook(book);
+                }
+            });
+        }
+
+    }
+
+    @Override
+    public void onAttach(Context context) {
+        super.onAttach(context);
+        if (context instanceof BookDetailsFragment.OnBookPlay) {
+            fragmentParent = (BookDetailsFragment.OnBookPlay) context;
+        } else {
+            throw new RuntimeException(context.toString()
+                    + " must implement OnBookPlay interface");
         }
     }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        fragmentParent = null;
+    }
+
 
     // Public method for parent Activity to "talk" to BookDetailsFragment
     public void displayBook(Book book) {
         Picasso.get().load(book.getCoverUrl()).into(bookCover);
-
         bookTitle.setText(book.getTitle());
         bookTitle.setGravity(Gravity.CENTER);
 
@@ -86,4 +115,7 @@ public class BookDetailsFragment extends Fragment {
         bookPageLength.setGravity(Gravity.CENTER);
     }
 
+    public interface OnBookPlay {
+        void playBook(Book book);
+    }
 }
