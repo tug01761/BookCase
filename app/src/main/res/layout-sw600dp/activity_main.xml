@@ -2,13 +2,45 @@
 <androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <SeekBar
+        android:id="@+id/seekBar"
+        android:layout_width="231dp"
+        android:layout_height="32dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="24dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/searchInput" />
+
+    <Button
+        android:id="@+id/pauseBtn"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="4dp"
+        android:text="@string/pause"
+        app:layout_constraintStart_toEndOf="@+id/fl_1"
+        app:layout_constraintTop_toBottomOf="@+id/searchInput" />
+
+    <Button
+        android:id="@+id/stopBtn"
+        android:layout_width="70dp"
+        android:layout_height="38dp"
+        android:layout_marginStart="9dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginEnd="9dp"
+        android:text="@string/stop"
+        app:layout_constraintEnd_toStartOf="@+id/seekBar"
+        app:layout_constraintStart_toEndOf="@+id/pauseBtn"
+        app:layout_constraintTop_toBottomOf="@+id/searchInput" />
+
     <FrameLayout
         android:id="@+id/fl_1"
-        android:layout_width="202dp"
-        android:layout_height="match_parent"
+        android:layout_width="168dp"
+        android:layout_height="1022dp"
         android:layout_marginStart="1dp"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -17,13 +49,15 @@
 
     <FrameLayout
         android:id="@+id/fl_2"
-        android:layout_width="395dp"
-        android:layout_height="match_parent"
+        android:layout_width="430dp"
+        android:layout_height="563dp"
+        android:layout_marginTop="98dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintHorizontal_bias="0.994"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toBottomOf="@+id/searchInput"
+        app:layout_constraintVertical_bias="0.206">
 
     </FrameLayout>
 
@@ -43,10 +77,35 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="24dp"
-        android:layout_marginTop="29dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="33dp"
         android:text="@android:string/search_go"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/searchInput"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <TextView
+        android:id="@+id/nowPlaying"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="15dp"
+        android:layout_marginTop="17dp"
+        android:text="@string/now_playing"
+        app:layout_constraintStart_toEndOf="@+id/fl_1"
+        app:layout_constraintTop_toBottomOf="@+id/pauseBtn" />
+
+    <TextView
+        android:id="@+id/nowPlayingBookTitle"
+        android:layout_width="300dp"
+        android:layout_height="20dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="15dp"
+        android:layout_marginEnd="24dp"
+        android:textSize="16sp"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/nowPlaying"
+        app:layout_constraintTop_toBottomOf="@+id/stopBtn" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
