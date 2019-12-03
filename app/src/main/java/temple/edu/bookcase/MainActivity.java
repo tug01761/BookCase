@@ -147,11 +147,9 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                         books.add(newBook);
                     }
 
-                    fl1 = getSupportFragmentManager().findFragmentById(R.id.fl_1); // get reference to fragment currently in container_1
-                    fl2 = getSupportFragmentManager().findFragmentById(R.id.fl_2); // get reference to fragment currently in container_1
+                    fl1 = getSupportFragmentManager().findFragmentById(R.id.fl_1);
+                    fl2 = getSupportFragmentManager().findFragmentById(R.id.fl_2);
                     singlePane = (findViewById(R.id.fl_2) == null);
-
-                    Fragment fl1 = getSupportFragmentManager().findFragmentById(R.id.fl_1);
 
                     if (fl1 == null && singlePane) {
                         getSupportFragmentManager()
@@ -237,6 +235,8 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
             } else if (fl1 instanceof BookListFragment) {
                 if (fl1 != null && ((BookListFragment) fl1).getBooks() != null) {
                     books = ((BookListFragment) fl1).getBooks();
+                    for (int i = 0; i < ((BookListFragment) fl1).getBooks().size(); i++) {
+                    }
                     getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.fl_1, BookListFragment.newInstance(books))
@@ -259,7 +259,46 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
                     fetchBooks(searchQuery);
                 }
             });
+
+            // Pause click listener
+            pauseBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (connected && !paused) {
+                        mediaControlBinder.pause();
+                        playing = false;
+                        paused = true;
+                    } else if (connected) {
+                        mediaControlBinder.pause();
+                        playing = true;
+                        paused = false;
+                    }
+                }
+            });
+
+            // Stop click listener
+            stopBtn.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if (connected) {
+                        mediaControlBinder.stop();
+                        nowPlayingBookTitle = "";
+                        nowPlayingBookTitleText.setText("");
+                        seekBar.setProgress(0);
+                        paused = false;
+                        playing = false;
+                        stopService(playBookIntent);
+                    }
+                }
+            });
         }
+
+        @Override
+        protected void onDestroy() {
+            super.onDestroy();
+            unbindService(serviceConnection);
+        }
+
 
         /* Fetches books */
         public void fetchBooks(final String searchString) {
@@ -336,6 +375,16 @@ public class MainActivity extends AppCompatActivity implements BookListFragment.
 
         @Override
         public void playBook(Book book) {
+            startService(playBookIntent);
 
+            if (connected) {
+                seekBar.setMax(book.getDuration());
+                nowPlayingBookDuration = book.getDuration();
+                nowPlayingBookTitle = book.getTitle();
+                nowPlayingBookTitleText.setText(nowPlayingBookTitle);
+                mediaControlBinder.play(book.getId());
+                playing = true;
+                paused = false;
         }
     }
+}
